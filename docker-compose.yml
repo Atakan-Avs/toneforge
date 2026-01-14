@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: replypilot_db
+    environment:
+      POSTGRES_USER: replypilot
+      POSTGRES_PASSWORD: replypilot
+      POSTGRES_DB: replypilot
+    ports:
+      - "5433:5432"
+    volumes:
+      - replypilot_pg:/var/lib/postgresql/data
+
+volumes:
+  replypilot_pg:
