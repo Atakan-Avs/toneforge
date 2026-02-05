@@ -7,6 +7,7 @@ import { requireAuth, AuthRequest } from "../middlewares/auth";
 
 export const authRouter = Router();
 
+
 const RegisterSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
@@ -53,75 +54,81 @@ authRouter.post("/register", async (req, res) => {
 
     const token = signAccessToken({ userId: user.id });
     return res.json({ ok: true, user, token, orgId: org.id });
-  } catch (e) {
-    return res.status(500).json({ ok: false, error: "Register failed" });
+  } catch (e: any) {
+    console.error("Register error:", e);
+    return res.status(500).json({ 
+      ok: false, 
+      error: "Register failed",
+      detail: process.env.NODE_ENV === "development" ? e?.message : undefined
+    });
   }
 });
 
 authRouter.post("/login", async (req, res) => {
-  const parsed = LoginSchema.safeParse(req.body);
-  if (!parsed.success) {
-    return res.status(400).json({ ok: false, error: parsed.error.flatten() });
-  }
-
-  const { email, password } = parsed.data;
-
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) return res.status(401).json({ ok: false, error: "Invalid credentials" });
-
-  const ok = await verifyPassword(password, user.passwordHash);
-  if (!ok) return res.status(401).json({ ok: false, error: "Invalid credentials" });
-
-  let orgId = user.activeOrgId ?? null;
-
-  // 🔥 EĞER USER'IN HİÇ ORG'U YOKSA → CREATE ET
-  if (!orgId) {
-    const membership = await prisma.membership.findFirst({
-      where: { userId: user.id },
-    });
-
-    if (!membership) {
-      // 🆕 create org + membership
-      const org = await prisma.organization.create({
-        data: {
-          name: `${user.email.split("@")[0]}'s Workspace`,
-        },
-      });
-
-      await prisma.membership.create({
-        data: {
-          userId: user.id,
-          orgId: org.id,
-          role: "owner",
-        },
-      });
-
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { activeOrgId: org.id },
-      });
-
-      orgId = org.id;
-    } else {
-      // membership var ama activeOrgId yok
-      orgId = membership.orgId;
-
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { activeOrgId: orgId },
-      });
+  try {
+    const parsed = LoginSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ ok: false, error: parsed.error.flatten() });
     }
+
+    const { email, password } = parsed.data;
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) return res.status(401).json({ ok: false, error: "Invalid credentials" });
+
+    const ok = await verifyPassword(password, user.passwordHash);
+    if (!ok) return res.status(401).json({ ok: false, error: "Invalid credentials" });
+
+    let orgId = user.activeOrgId ?? null;
+
+    if (!orgId) {
+      const membership = await prisma.membership.findFirst({
+        where: { userId: user.id },
+      });
+
+      if (!membership) {
+        const org = await prisma.organization.create({
+          data: { name: `${user.email.split("@")[0]}'s Workspace` },
+        });
+
+        await prisma.membership.create({
+          data: { userId: user.id, orgId: org.id, role: "owner" },
+        });
+
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { activeOrgId: org.id },
+        });
+
+        orgId = org.id;
+      } else {
+        orgId = membership.orgId;
+
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { activeOrgId: orgId },
+        });
+      }
+    }
+
+    const token = signAccessToken({ userId: user.id });
+
+    return res.json({
+      ok: true,
+      user: { id: user.id, email: user.email },
+      token,
+      orgId,
+    });
+  } catch (e: any) {
+    console.error("LOGIN ERROR:", e);
+    return res.status(500).json({
+      ok: false,
+      error: "Login failed",
+      detail: process.env.NODE_ENV === "development" ? e?.message : undefined,
+    });
   }
-
-  const token = signAccessToken({ userId: user.id });
-
-  return res.json({
-    ok: true,
-    user: { id: user.id, email: user.email },
-    token,
-    orgId,
-  });
 });
+
 
 
 authRouter.get("/me", requireAuth, async (req: AuthRequest, res) => {

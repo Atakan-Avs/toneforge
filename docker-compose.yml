@@ -10,6 +10,35 @@ services:
       - "5433:5432"
     volumes:
       - replypilot_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U replypilot -d replypilot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build:
+      context: ./apps/api
+    container_name: replypilot_api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://replypilot:replypilot@db:5432/replypilot?schema=public
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      HF_API_TOKEN: ${HF_API_TOKEN}
+      HF_MODEL: ${HF_MODEL}
+      HF_MAX_NEW_TOKENS: ${HF_MAX_NEW_TOKENS}
+      HF_TEMPERATURE: ${HF_TEMPERATURE}
+      HF_TOP_P: ${HF_TOP_P}
+    ports:
+      - "4000:4000"
+    restart: unless-stopped
+    command: sh -c "npx prisma generate && npx prisma migrate deploy && node dist/index.js"
 
 volumes:
   replypilot_pg:

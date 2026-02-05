@@ -132,8 +132,8 @@ export default function BillingPage() {
   const { currentPlan, used, limit, remaining, pct, data } = view!;
 
   return (
-    <div style={{ padding: 24, maxWidth: 980, margin: "0 auto" }}>
-      <h2 style={{ marginBottom: 8 }}>Billing</h2>
+    <div style={{ padding: "clamp(8px, 2vw, 12px)", maxWidth: "980px", width: "100%", margin: "0 auto", overflowX: "hidden", boxSizing: "border-box" }}>
+      <h2 style={{ marginBottom: 8, fontSize: "clamp(18px, 4.5vw, 24px)" }}>Billing</h2>
 
       {success && (
         <div style={{ padding: 12, border: "1px solid #2ecc71", borderRadius: 10, marginBottom: 12 }}>
@@ -146,24 +146,26 @@ export default function BillingPage() {
         </div>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <div style={{ border: "1px solid #2a2a2a", borderRadius: 14, padding: 16 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-            <div>
-              <div style={{ fontSize: 12, opacity: 0.7 }}>Current plan</div>
-              <div style={{ fontSize: 20, fontWeight: 700 }}>{planLabel(currentPlan)}</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))", gap: "clamp(12px, 3vw, 16px)", width: "100%", overflowX: "hidden" }}>
+        <div style={{ border: "1px solid #2a2a2a", borderRadius: 14, padding: "clamp(12px, 3vw, 16px)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: "8px" }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: "clamp(11px, 2.5vw, 12px)", opacity: 0.7 }}>Current plan</div>
+              <div style={{ fontSize: "clamp(16px, 4vw, 20px)", fontWeight: 700 }}>{planLabel(currentPlan)}</div>
             </div>
             <button
               onClick={onManageBilling}
               disabled={actionLoading !== null}
               style={{
-                padding: "10px 12px",
+                padding: "clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 12px)",
                 borderRadius: 10,
                 border: "1px solid #444",
                 background: "transparent",
                 color: "var(--text)",
                 cursor: actionLoading !== null ? "not-allowed" : "pointer",
                 opacity: actionLoading !== null ? 0.6 : 1,
+                fontSize: "clamp(11px, 2.5vw, 13px)",
+                whiteSpace: "nowrap",
               }}
               title="Open Stripe billing portal"
             >
@@ -173,13 +175,13 @@ export default function BillingPage() {
 
           {/* Subscription Status & Renewal Info */}
           {data.subscription && (
-            <div style={{ marginTop: 16, padding: 12, background: "#1a1a1a", borderRadius: 10 }}>
-              <div style={{ fontSize: 12, opacity: 0.7, marginBottom: 6 }}>Subscription</div>
-              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
+            <div style={{ marginTop: "clamp(12px, 3vw, 16px)", padding: "clamp(10px, 2.5vw, 12px)", background: "#1a1a1a", borderRadius: 10 }}>
+              <div style={{ fontSize: "clamp(11px, 2.5vw, 12px)", opacity: 0.7, marginBottom: 6 }}>Subscription</div>
+              <div style={{ fontSize: "clamp(12px, 3vw, 13px)", fontWeight: 600, marginBottom: 8 }}>
                 Status: <span style={{ textTransform: "capitalize" }}>{data.subscription.status}</span>
               </div>
               {data.subscription.currentPeriodEnd && (
-                <div style={{ fontSize: 12, opacity: 0.8 }}>
+                <div style={{ fontSize: "clamp(11px, 2.5vw, 12px)", opacity: 0.8 }}>
                   {data.subscription.cancelAtPeriodEnd ? (
                     <>
                       <span style={{ color: "#e67e22" }}>Cancels on: </span>
@@ -204,23 +206,23 @@ export default function BillingPage() {
             </div>
           )}
 
-          <div style={{ marginTop: 16 }}>
-            <div style={{ fontSize: 12, opacity: 0.7 }}>Monthly usage</div>
-            <div style={{ marginTop: 6, fontSize: 14 }}>
+          <div style={{ marginTop: "clamp(12px, 3vw, 16px)" }}>
+            <div style={{ fontSize: "clamp(11px, 2.5vw, 12px)", opacity: 0.7 }}>Monthly usage</div>
+            <div style={{ marginTop: 6, fontSize: "clamp(13px, 3vw, 14px)" }}>
               <b>{used}</b> / {limit} replies ({pct}%)
             </div>
             <div style={{ height: 10, background: "#222", borderRadius: 999, marginTop: 10, overflow: "hidden" }}>
               <div style={{ height: "100%", width: `${pct}%`, background: "#555" }} />
             </div>
-            <div style={{ marginTop: 8, fontSize: 12, opacity: 0.7 }}>
+            <div style={{ marginTop: 8, fontSize: "clamp(11px, 2.5vw, 12px)", opacity: 0.7 }}>
               <div>Remaining: {remaining} replies</div>
               <div style={{ marginTop: 4 }}>Period: {data.period}</div>
             </div>
           </div>
         </div>
 
-        <div style={{ border: "1px solid #2a2a2a", borderRadius: 14, padding: 16 }}>
-          <div style={{ fontSize: 12, opacity: 0.7, marginBottom: 8 }}>Plans</div>
+        <div style={{ border: "1px solid #2a2a2a", borderRadius: 14, padding: "clamp(12px, 3vw, 16px)" }}>
+          <div style={{ fontSize: "clamp(11px, 2.5vw, 12px)", opacity: 0.7, marginBottom: 8 }}>Plans</div>
 
           <div style={{ display: "grid", gap: 10 }}>
             <PlanCard
@@ -291,9 +293,9 @@ export default function BillingPage() {
       </div>
 
       {/* Invoices Section */}
-      <div style={{ marginTop: 24 }}>
-        <div style={{ border: "1px solid #2a2a2a", borderRadius: 14, padding: 16 }}>
-          <h3 style={{ margin: "0 0 16px 0", fontSize: 18, fontWeight: 700 }}>Invoices</h3>
+      <div style={{ marginTop: "clamp(16px, 4vw, 24px)" }}>
+        <div style={{ border: "1px solid #2a2a2a", borderRadius: 14, padding: "clamp(12px, 3vw, 16px)", overflowX: "auto" }}>
+          <h3 style={{ margin: "0 0 clamp(12px, 3vw, 16px) 0", fontSize: "clamp(16px, 4vw, 18px)", fontWeight: 700 }}>Invoices</h3>
 
           {invoicesLoading ? (
             <div style={{ padding: 24, textAlign: "center", color: "#888" }}>Loading invoices...</div>
@@ -302,12 +304,13 @@ export default function BillingPage() {
               No invoices found.
             </div>
           ) : (
-            <div style={{ overflowX: "auto" }}>
+            <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
               <table
                 style={{
                   width: "100%",
+                  minWidth: "600px",
                   borderCollapse: "collapse",
-                  fontSize: 14,
+                  fontSize: "clamp(12px, 3vw, 14px)",
                 }}
               >
                 <thead>
@@ -444,33 +447,34 @@ function PlanCard(props: {
   onClick: () => void;
 }) {
   return (
-    <div style={{ border: "1px solid #333", borderRadius: 12, padding: 12 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}>
-        <div>
-          <div style={{ fontWeight: 700 }}>
+    <div style={{ border: "1px solid #333", borderRadius: 12, padding: "clamp(10px, 2.5vw, 12px)" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", gap: "clamp(8px, 2vw, 10px)", flexWrap: "wrap" }}>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <div style={{ fontWeight: 700, fontSize: "clamp(14px, 3.5vw, 16px)" }}>
             {props.title}{" "}
             {props.active && (
-              <span style={{ fontSize: 12, opacity: 0.7, fontWeight: 500 }}>(Current)</span>
+              <span style={{ fontSize: "clamp(10px, 2.5vw, 12px)", opacity: 0.7, fontWeight: 500 }}>(Current)</span>
             )}
           </div>
-          <div style={{ fontSize: 12, opacity: 0.7 }}>{props.subtitle}</div>
-          <div style={{ marginTop: 6, fontSize: 12 }}>{props.quota}</div>
+          <div style={{ fontSize: "clamp(11px, 2.5vw, 12px)", opacity: 0.7 }}>{props.subtitle}</div>
+          <div style={{ marginTop: 6, fontSize: "clamp(11px, 2.5vw, 12px)" }}>{props.quota}</div>
         </div>
 
         <button
           onClick={props.onClick}
           disabled={props.disabled}
           style={{
-            padding: "10px 12px",
+            padding: "clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 12px)",
             borderRadius: 10,
             border: "1px solid #444",
             background: props.active ? "#1f1f1f" : props.disabled ? "#333" : "transparent",
             color: props.disabled ? "#fff" : "var(--text)",
             cursor: props.disabled ? "not-allowed" : "pointer",
             opacity: props.disabled ? 1 : 1,
-            height: 40,
+            minHeight: 40,
             alignSelf: "center",
             whiteSpace: "nowrap",
+            fontSize: "clamp(11px, 2.5vw, 13px)",
           }}
         >
           {props.buttonText}

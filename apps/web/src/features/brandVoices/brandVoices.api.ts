@@ -17,7 +17,11 @@ export async function createBrandVoice(input: {
   description: string;
 }): Promise<BrandVoiceDto> {
   const res = await api.post("/brand-voices", input);
-  return res.data?.item as BrandVoiceDto;
+
+  const data = res.data;
+  const brandVoice = (data?.item ?? data?.brandVoice ?? data) as BrandVoiceDto;
+
+  return brandVoice;
 }
 
 export async function updateBrandVoice(
@@ -25,7 +29,11 @@ export async function updateBrandVoice(
   input: { name: string; description: string }
 ): Promise<BrandVoiceDto> {
   const res = await api.put(`/brand-voices/${id}`, input);
-  return res.data?.item as BrandVoiceDto;
+
+  const data = res.data;
+  const brandVoice = (data?.item ?? data?.brandVoice ?? data) as BrandVoiceDto;
+
+  return brandVoice;
 }
 
 export async function deleteBrandVoice(id: string): Promise<void> {

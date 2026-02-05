@@ -23,11 +23,13 @@ export default function AppLayout() {
           color: active ? "var(--primary)" : "var(--text-secondary)",
           fontWeight: active ? 700 : 500,
           textDecoration: "none",
-          padding: "8px 16px",
+          padding: "clamp(4px, 1.5vw, 6px) clamp(8px, 2vw, 12px)",
           borderRadius: "var(--radius-md)",
           transition: "all 0.2s ease",
           position: "relative",
-          fontSize: "14px",
+          fontSize: "clamp(11px, 2.8vw, 14px)",
+          whiteSpace: "nowrap",
+          flexShrink: 0,
           ...(active && {
             background: "var(--primary-light)",
           }),
@@ -49,14 +51,14 @@ export default function AppLayout() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)", overflowX: "hidden", maxWidth: "100vw" }}>
       {/* Professional Navigation Bar */}
       <header
         style={{
           display: "flex",
           alignItems: "center",
-          gap: "var(--spacing-lg)",
-          padding: "var(--spacing-md) var(--spacing-xl)",
+          gap: "clamp(8px, 2vw, 12px)",
+          padding: "clamp(8px, 2vw, 12px)",
           borderBottom: "1px solid var(--border)",
           background: "var(--card)",
           position: "sticky",
@@ -64,6 +66,11 @@ export default function AppLayout() {
           zIndex: 100,
           backdropFilter: "blur(10px)",
           boxShadow: "var(--shadow-sm)",
+          flexWrap: "wrap",
+          overflowX: "hidden",
+          maxWidth: "100%",
+          width: "100%",
+          boxSizing: "border-box",
         }}
       >
         {/* Brand Logo */}
@@ -73,18 +80,21 @@ export default function AppLayout() {
             textDecoration: "none",
             display: "flex",
             alignItems: "center",
-            gap: "var(--spacing-sm)",
+            gap: "clamp(4px, 1vw, 8px)",
+            flexShrink: 0,
+            minWidth: 0,
           }}
         >
           <div
             style={{
               fontWeight: 800,
-              fontSize: "20px",
+              fontSize: "clamp(14px, 3.5vw, 20px)",
               letterSpacing: "-0.02em",
               background: "linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
+              whiteSpace: "nowrap",
             }}
           >
             ToneForge
@@ -95,8 +105,14 @@ export default function AppLayout() {
         <nav
           style={{
             display: "flex",
-            gap: "var(--spacing-xs)",
-            marginLeft: "var(--spacing-md)",
+            gap: "clamp(4px, 1vw, 8px)",
+            marginLeft: "clamp(4px, 1vw, 8px)",
+            flexWrap: "wrap",
+            overflowX: "auto",
+            maxWidth: "100%",
+            flex: "1 1 auto",
+            minWidth: 0,
+            WebkitOverflowScrolling: "touch",
           }}
         >
           <NavLink to="/app" label="Generator" />
@@ -108,10 +124,12 @@ export default function AppLayout() {
         {/* Right Side Actions */}
         <div
           style={{
-            marginLeft: "auto",
             display: "flex",
-            gap: "var(--spacing-md)",
+            gap: "clamp(4px, 1vw, 8px)",
             alignItems: "center",
+            flexShrink: 0,
+            flexWrap: "wrap",
+            minWidth: 0,
           }}
         >
           <WorkspaceSwitcher />
@@ -119,9 +137,10 @@ export default function AppLayout() {
             onClick={onLogout}
             className="secondary"
             style={{
-              padding: "8px 16px",
-              fontSize: "13px",
+              padding: "clamp(4px, 1.5vw, 6px) clamp(8px, 2vw, 12px)",
+              fontSize: "clamp(10px, 2.5vw, 12px)",
               fontWeight: 600,
+              whiteSpace: "nowrap",
             }}
           >
             Logout
@@ -130,7 +149,7 @@ export default function AppLayout() {
       </header>
 
       {/* Main Content */}
-      <main style={{ padding: "var(--spacing-xl)" }}>
+      <main style={{ padding: "clamp(8px, 2vw, 12px)", maxWidth: "100%", overflowX: "hidden", width: "100%", boxSizing: "border-box" }}>
         <Outlet />
       </main>
     </div>

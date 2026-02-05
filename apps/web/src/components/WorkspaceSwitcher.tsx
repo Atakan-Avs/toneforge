@@ -7,17 +7,18 @@ export default function WorkspaceSwitcher() {
     return (
       <div
         style={{
-          padding: "8px 16px",
+          padding: "clamp(6px, 1.5vw, 8px) clamp(12px, 3vw, 16px)",
           borderRadius: "var(--radius-md)",
           background: "var(--input-bg)",
-          fontSize: "13px",
+          fontSize: "clamp(11px, 2.5vw, 13px)",
           color: "var(--text-secondary)",
           display: "flex",
           alignItems: "center",
-          gap: "8px",
+          gap: "clamp(6px, 1.5vw, 8px)",
+          whiteSpace: "nowrap",
         }}
       >
-        <div className="spinner" style={{ width: "14px", height: "14px", borderWidth: "2px" }} />
+        <div className="spinner" style={{ width: "14px", height: "14px", borderWidth: "2px", flexShrink: 0 }} />
         Loading…
       </div>
     );
@@ -27,11 +28,12 @@ export default function WorkspaceSwitcher() {
     return (
       <div
         style={{
-          padding: "8px 16px",
+          padding: "clamp(6px, 1.5vw, 8px) clamp(12px, 3vw, 16px)",
           borderRadius: "var(--radius-md)",
           background: "var(--input-bg)",
-          fontSize: "13px",
+          fontSize: "clamp(11px, 2.5vw, 13px)",
           color: "var(--text-secondary)",
+          whiteSpace: "nowrap",
         }}
       >
         No workspaces
@@ -44,15 +46,18 @@ export default function WorkspaceSwitcher() {
       value={orgId ?? ""}
       onChange={(e) => setOrgId(e.target.value)}
       style={{
-        padding: "8px 32px 8px 16px",
+        padding: "clamp(4px, 1vw, 6px) clamp(24px, 6vw, 28px) clamp(4px, 1vw, 6px) clamp(10px, 2.5vw, 12px)",
         borderRadius: "var(--radius-md)",
         background: "var(--input-bg)",
         border: "1px solid var(--border)",
         color: "var(--text)",
-        fontSize: "13px",
+        fontSize: "clamp(10px, 2.5vw, 13px)",
         fontWeight: 500,
         cursor: "pointer",
-        minWidth: "180px",
+        minWidth: "80px",
+        maxWidth: "100%",
+        width: "auto",
+        flexShrink: 1,
       }}
     >
       {workspaces.map((w) => (

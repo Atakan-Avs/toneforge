@@ -1,12 +1,10 @@
 import "dotenv/config";
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from "prisma/config";
 
+// Build sırasında DATABASE_URL olmayabilir. Generate için boş geçiyoruz.
+// Migrate/deploy sırasında gerçek DATABASE_URL compose env ile gelecek.
 export default defineConfig({
-  schema: "prisma/schema.prisma",
-  migrations: {
-    path: "prisma/migrations",
-  },
   datasource: {
-    url: env("DATABASE_URL"),
+    url: process.env.DATABASE_URL ?? "postgresql://user:pass@localhost:5432/db",
   },
 });

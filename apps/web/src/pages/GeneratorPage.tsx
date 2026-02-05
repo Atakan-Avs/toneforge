@@ -213,6 +213,18 @@ export default function GeneratorPage() {
     } catch (err: any) {
       const status = err?.response?.status;
 
+      // Network errors (no response) - common on mobile
+      if (!err?.response) {
+        if (err?.code === "ECONNABORTED" || err?.message?.includes("timeout")) {
+          setGenNotice("Request timeout. Please check your connection and try again.");
+        } else if (err?.message?.includes("Network Error") || err?.message?.includes("Failed to fetch")) {
+          setGenNotice("Network error. Please check your internet connection and try again.");
+        } else {
+          setGenNotice(err?.message || "Network error. Please try again.");
+        }
+        return;
+      }
+
       if (status === 429 || status === 402) {
         // ✅ cooldown başlat
         setCooldown(5);
@@ -229,7 +241,7 @@ export default function GeneratorPage() {
         return;
       }
 
-      const msg = err?.response?.data?.error ?? err?.message ?? "Request failed";
+      const msg = err?.response?.data?.error ?? err?.message ?? "Request failed. Please try again.";
       setGenNotice(msg);
     } finally {
       setLoading(false);
@@ -313,15 +325,17 @@ export default function GeneratorPage() {
 
 
   return (
-    <div className="container" style={{ maxWidth: "1400px" }}>
+    <div className="container" style={{ maxWidth: "1400px", width: "100%", overflowX: "hidden", boxSizing: "border-box", padding: "clamp(8px, 2vw, 24px) clamp(8px, 2vw, 16px)" }}>
       {/* Header */}
       <div
         className="topbar"
         style={{
           display: "flex",
-          gap: "var(--spacing-lg)",
+          gap: "clamp(8px, 2vw, 12px)",
           alignItems: "center",
-          marginBottom: "var(--spacing-xl)",
+          marginBottom: "clamp(12px, 3vw, 16px)",
+          flexWrap: "wrap",
+          width: "100%",
         }}
       >
         <h2
@@ -329,7 +343,8 @@ export default function GeneratorPage() {
           style={{
             margin: 0,
             flex: 1,
-            fontSize: "28px",
+            fontSize: "clamp(18px, 4.5vw, 28px)",
+            minWidth: 0,
           }}
         >
           AI Reply Generator
@@ -339,25 +354,27 @@ export default function GeneratorPage() {
           className="secondary"
           onClick={() => setTheme(theme === "light" ? "dark" : "light")}
           style={{
-            padding: "10px 16px",
-            fontSize: "13px",
+            padding: "clamp(6px, 1.5vw, 8px) clamp(10px, 2vw, 14px)",
+            fontSize: "clamp(10px, 2.5vw, 13px)",
+            whiteSpace: "nowrap",
+            flexShrink: 0,
           }}
         >
-          {theme === "light" ? "Dark Mode" : "Light Mode"}
+          {theme === "light" ? "Dark" : "Light"}
         </button>
       </div>
 
       {/* Usage Bar */}
-      <div className="usage-row" style={{ marginBottom: "var(--spacing-lg)" }}>
-        <div>
+      <div className="usage-row" style={{ marginBottom: "clamp(12px, 3vw, 16px)", width: "100%" }}>
+        <div style={{ width: "100%" }}>
           {usageLoading && (
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "var(--spacing-sm)",
+                gap: "clamp(4px, 1vw, 8px)",
                 color: "var(--text-secondary)",
-                marginBottom: "var(--spacing-md)",
+                marginBottom: "clamp(8px, 2vw, 12px)",
               }}
             >
               <div className="spinner" style={{ width: "16px", height: "16px" }} />
@@ -443,10 +460,10 @@ export default function GeneratorPage() {
       </div>
 
 
-      <div className="grid">
+      <div className="grid" style={{ width: "100%" }}>
         {/* LEFT: Generator */}
-        <div className="card">
-          <h3 style={{ fontSize: "20px", marginBottom: "var(--spacing-lg)" }}>
+        <div className="card" style={{ width: "100%", minWidth: 0 }}>
+          <h3 style={{ fontSize: "clamp(16px, 4vw, 20px)", marginBottom: "clamp(12px, 3vw, 16px)" }}>
             Customer Message
           </h3>
 
@@ -461,12 +478,12 @@ export default function GeneratorPage() {
             }}
           />
 
-          <div className="controls">
-            <div>
+          <div className="controls" style={{ width: "100%" }}>
+            <div style={{ width: "100%" }}>
               <label
                 style={{
                   display: "block",
-                  fontSize: "12px",
+                  fontSize: "clamp(11px, 2.5vw, 12px)",
                   fontWeight: 600,
                   marginBottom: "6px",
                   color: "var(--text-secondary)",
@@ -477,6 +494,7 @@ export default function GeneratorPage() {
               <select
                 value={tone}
                 onChange={(e) => setTone(e.target.value as Tone)}
+                style={{ width: "100%" }}
               >
                 <option value="formal">Formal</option>
                 <option value="friendly">Friendly</option>
@@ -484,11 +502,11 @@ export default function GeneratorPage() {
               </select>
             </div>
 
-            <div>
+            <div style={{ width: "100%" }}>
               <label
                 style={{
                   display: "block",
-                  fontSize: "12px",
+                  fontSize: "clamp(11px, 2.5vw, 12px)",
                   fontWeight: 600,
                   marginBottom: "6px",
                   color: "var(--text-secondary)",
@@ -506,6 +524,7 @@ export default function GeneratorPage() {
                   if (next) localStorage.setItem(BV_KEY, next);
                   else localStorage.removeItem(BV_KEY);
                 }}
+                style={{ width: "100%" }}
               >
                 <option value="">No brand voice</option>
                 {brandVoices.map((b) => (
@@ -516,11 +535,11 @@ export default function GeneratorPage() {
               </select>
             </div>
 
-            <div>
+            <div style={{ width: "100%" }}>
               <label
                 style={{
                   display: "block",
-                  fontSize: "12px",
+                  fontSize: "clamp(11px, 2.5vw, 12px)",
                   fontWeight: 600,
                   marginBottom: "6px",
                   color: "var(--text-secondary)",
@@ -538,6 +557,7 @@ export default function GeneratorPage() {
                   if (next) localStorage.setItem(TPL_KEY, next);
                   else localStorage.removeItem(TPL_KEY);
                 }}
+                style={{ width: "100%" }}
               >
                 <option value="">No template</option>
                 {templates.map((t) => (
@@ -552,10 +572,11 @@ export default function GeneratorPage() {
               onClick={generate}
               disabled={loading || cooldown > 0 || !message.trim()}
               style={{
-                marginTop: "var(--spacing-md)",
-                padding: "14px",
-                fontSize: "15px",
+                marginTop: "clamp(8px, 2vw, 12px)",
+                padding: "clamp(10px, 2.5vw, 14px)",
+                fontSize: "clamp(13px, 3vw, 15px)",
                 fontWeight: 600,
+                width: "100%",
               }}
             >
               {loading ? (
@@ -785,22 +806,24 @@ export default function GeneratorPage() {
         </div>
 
         {/* RIGHT: History Panel */}
-        <div className="card history-panel">
+        <div className="card history-panel" style={{ width: "100%", minWidth: 0 }}>
           <div
             style={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginBottom: "var(--spacing-lg)",
+              marginBottom: "clamp(12px, 3vw, 16px)",
+              flexWrap: "wrap",
+              gap: "8px",
             }}
           >
-            <h3 style={{ margin: 0, fontSize: "20px" }}>
+            <h3 style={{ margin: 0, fontSize: "clamp(16px, 4vw, 20px)" }}>
               History{" "}
               <span
                 style={{
                   color: "var(--text-secondary)",
                   fontWeight: 500,
-                  fontSize: "14px",
+                  fontSize: "clamp(12px, 3vw, 14px)",
                 }}
               >
                 ({history.length})
@@ -819,10 +842,11 @@ export default function GeneratorPage() {
             <input
               value={historyQuery}
               onChange={(e) => setHistoryQuery(e.target.value)}
-              placeholder="🔍 Search in history..."
+              placeholder="Search in history..."
               style={{
-                padding: "12px 16px",
-                fontSize: "14px",
+                padding: "clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 16px)",
+                fontSize: "clamp(14px, 3.5vw, 16px)",
+                width: "100%",
               }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") loadHistory();
@@ -841,9 +865,9 @@ export default function GeneratorPage() {
                 onChange={(e) => setHistoryTone(e.target.value as any)}
                 style={{
                   flex: 1,
-                  minWidth: "120px",
-                  padding: "10px 16px",
-                  fontSize: "13px",
+                  minWidth: "100px",
+                  padding: "clamp(8px, 2vw, 10px) clamp(12px, 3vw, 16px)",
+                  fontSize: "clamp(12px, 3vw, 13px)",
                 }}
               >
                 <option value="">All tones</option>
@@ -856,11 +880,12 @@ export default function GeneratorPage() {
                 onClick={() => loadHistory()}
                 className="secondary"
                 style={{
-                  padding: "10px 16px",
-                  fontSize: "13px",
+                  padding: "clamp(8px, 2vw, 10px) clamp(12px, 3vw, 16px)",
+                  fontSize: "clamp(12px, 3vw, 13px)",
+                  whiteSpace: "nowrap",
                 }}
               >
-                🔍 Search
+                Search
               </button>
 
               <button
@@ -871,8 +896,9 @@ export default function GeneratorPage() {
                 }}
                 className="secondary"
                 style={{
-                  padding: "10px 16px",
-                  fontSize: "13px",
+                  padding: "clamp(8px, 2vw, 10px) clamp(12px, 3vw, 16px)",
+                  fontSize: "clamp(12px, 3vw, 13px)",
+                  whiteSpace: "nowrap",
                 }}
               >
                 Reset

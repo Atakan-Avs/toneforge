@@ -13,8 +13,29 @@ export default function RegisterPage() {
 
 
     function extractErrorMessage(err: any): string {
+        // Network errors (no response) - common on mobile
+        if (!err?.response) {
+            // Check for timeout
+            if (err?.code === "ECONNABORTED" || err?.message?.includes("timeout")) {
+                return "Request timeout. Please check your connection and try again.";
+            }
+            // Check for network errors
+            if (err?.message?.includes("Network Error") || err?.message?.includes("Failed to fetch")) {
+                return "Network error. Please check your internet connection and try again.";
+            }
+            // Generic network error
+            return err?.message || "Network error. Please check your connection and try again.";
+        }
+
         const data = err?.response?.data;
-        if (!data) return "Unexpected error";
+        if (!data) {
+            // HTTP error without data
+            const status = err?.response?.status;
+            if (status === 0) {
+                return "Unable to connect to server. Please check your connection.";
+            }
+            return `Request failed (${status || "unknown"}). Please try again.`;
+        }
 
         if (typeof data.error === "object") {
             if (data.error.fieldErrors) {
@@ -24,7 +45,8 @@ export default function RegisterPage() {
         }
 
         if (typeof data.error === "string") return data.error;
-        return "Request failed";
+        if (typeof data.message === "string") return data.message;
+        return "Request failed. Please try again.";
     }
 
 

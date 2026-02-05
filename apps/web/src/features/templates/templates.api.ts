@@ -17,7 +17,13 @@ export async function createTemplate(input: {
   content: string;
 }): Promise<TemplateDto> {
   const res = await api.post("/templates", input);
-  return res.data?.item as TemplateDto;
+
+  // backend response şekilleri farklı olabilir:
+  // { item: {...} }  veya  { template: {...} }  veya  direkt {...}
+  const data = res.data;
+  const template = (data?.item ?? data?.template ?? data) as TemplateDto;
+
+  return template;
 }
 
 export async function updateTemplate(
@@ -25,7 +31,11 @@ export async function updateTemplate(
   input: { category: string; content: string }
 ): Promise<TemplateDto> {
   const res = await api.put(`/templates/${id}`, input);
-  return res.data?.item as TemplateDto;
+
+  const data = res.data;
+  const template = (data?.item ?? data?.template ?? data) as TemplateDto;
+
+  return template;
 }
 
 export async function deleteTemplate(id: string): Promise<void> {

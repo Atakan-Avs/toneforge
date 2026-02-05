@@ -10,6 +10,8 @@ import BrandVoicesPage from "./pages/BrandVoicesPage";
 import AuthGuard from "./components/AuthGuard";
 import AppLayout from "./components/AppLayout";
 import BillingPage from "./pages/BillingPage";
+import "express-async-errors";
+
 
 export default function App() {
   return (
